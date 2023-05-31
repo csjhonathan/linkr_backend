@@ -35,3 +35,17 @@ export const signUp = Joi.object({
     .uri()
     .optional(),
 });
+
+export const signIn = Joi.object({
+  email: Joi
+    .string()
+    .custom((value) => sanitizeText(value))
+    .email()
+    .required()
+    .trim(true),
+  password: Joi
+    .string()
+    .custom((value) => sanitizeText(value))
+    .required()
+    .trim(true),
+});

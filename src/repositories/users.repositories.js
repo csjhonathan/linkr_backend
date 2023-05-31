@@ -14,7 +14,7 @@ export function create(data) {
 export function getByEmail(email) {
   const query = {
     text: `
-      SELECT u.id, u.name, u.email
+      SELECT u.id, u.name, u.email, u.password
       FROM users u
       WHERE email = $1;
     `,

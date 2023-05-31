@@ -1,6 +1,6 @@
 import db from '../database/connection.js';
 
-export function create(data) {
+export function createUser(data) {
   const query = {
     text: `
       INSERT INTO users (${Object.keys(data).join(', ')})
@@ -11,7 +11,7 @@ export function create(data) {
   return db.query(query);
 }
 
-export function getByEmail(email) {
+export function getUserByEmail(email) {
   const query = {
     text: `
       SELECT u.id, u.name, u.email, u.password
@@ -19,6 +19,19 @@ export function getByEmail(email) {
       WHERE email = $1;
     `,
     values: [email],
+  };
+
+  return db.query(query);
+}
+
+export function getUserById(userId) {
+  const query = {
+    text: `
+      SELECT u.id, u.name, u.email
+      FROM users u
+      WHERE id = $1;
+    `,
+    values: [userId],
   };
 
   return db.query(query);

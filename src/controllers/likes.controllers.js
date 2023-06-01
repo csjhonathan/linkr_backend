@@ -1,6 +1,6 @@
 import likesRepositories from '../repositories/likes.repositories.js';
 
-async function likePost(req, res) {
+export async function likePost(req, res) {
   const { user } = res.locals;
   const { postId } = req.params;
 
@@ -12,4 +12,14 @@ async function likePost(req, res) {
   }
 }
 
-export default likePost;
+export async function unlikePost(req, res) {
+  const { user } = res.locals;
+  const { postId } = req.params;
+
+  try {
+    await likesRepositories.deleteLikeByUserIdAndPostId(user.id, postId);
+    res.sendStatus(204);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+}

@@ -11,10 +11,17 @@ async function findLikeByUserIdAndPostId(userId, postId) {
   const likeExists = await db.query(`
     SELECT *
     FROM likes
-    WHERE user_id = $1 AND post_id = $2
+    WHERE user_id = $1 AND post_id = $2;
   `, [userId, postId]);
 
   return likeExists.rows[0];
 }
 
-export default { createLike, findLikeByUserIdAndPostId };
+async function deleteLikeByUserIdAndPostId(userId, postId) {
+  await db.query(`
+    DELETE FROM likes
+    WHERE user_id = $1 AND post_id = $2;
+  `, [userId, postId]);
+}
+
+export default { createLike, findLikeByUserIdAndPostId, deleteLikeByUserIdAndPostId };

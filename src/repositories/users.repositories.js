@@ -14,7 +14,7 @@ export function createUser(data) {
 export function getUserByEmail(email) {
   const query = {
     text: `
-      SELECT u.id, u.name, u.email, u.password
+      SELECT u.id, u.name, u.email, u.password, u.photo
       FROM users u
       WHERE email = $1;
     `,
@@ -27,7 +27,7 @@ export function getUserByEmail(email) {
 export function getUserById(userId) {
   const query = {
     text: `
-      SELECT u.id, u.name, u.email
+      SELECT u.id, u.name, u.email, u.photo
       FROM users u
       WHERE id = $1;
     `,

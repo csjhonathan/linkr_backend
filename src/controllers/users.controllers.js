@@ -27,7 +27,6 @@ export async function signIn(req, res) {
     id: user.id,
     name: user.name,
     email: user.email,
-    photo: user.photo ?? null,
   };
 
   const token = Jwt.sign(payload, process.env.SECRET_KEY);
@@ -37,7 +36,7 @@ export async function signIn(req, res) {
       id: user.id,
       name: user.name,
       email: user.email,
-      photo: user.photo ?? null,
+      photo: user.photo,
     },
     token,
   });

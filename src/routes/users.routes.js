@@ -10,4 +10,5 @@ const usersRoutes = Router();
 usersRoutes.post('/signup', schemaValidator(schema.signUp), userVerifierExists, signUp);
 usersRoutes.post('/signin', schemaValidator(schema.signIn), userVerifierExists, signIn);
 usersRoutes.post('/signout', tokenValidator, signOut);
+
 export default usersRoutes;

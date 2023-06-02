@@ -28,7 +28,7 @@ export const signUp = Joi.object({
     })
     .required()
     .messages({
-      'string.whitespace': '{{#label}} não pode conter espaços em branco',
+      'string.whitespace': '{{#label}} cannot contain blanks',
     }),
   photo: Joi
     .string()

@@ -7,5 +7,7 @@ import postSchema from '../schemas/posts.schema.js';
 const postsRoutes = Router();
 
 postsRoutes.post('/posts', tokenValidator, schemaValidator(postSchema), postsController.create);
+postsRoutes.get('/posts/user/:userId', tokenValidator, postsController.listUserTimeline);
+postsRoutes.get('/posts/:userId', tokenValidator, postsController.listTimelinePosts);
 
 export default postsRoutes;

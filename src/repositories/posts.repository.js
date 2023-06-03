@@ -7,4 +7,26 @@ async function createPost(values) {
   return rows[0];
 }
 
-export default { createPost };
+async function listUserPosts(id) {
+  const { rows } = await db.query(`
+    SELECT *
+    FROM posts
+    ORDER BY id DESC
+    LIMIT 20
+    WHERE id = $1;
+  `, [id]);
+
+  return rows;
+}
+
+async function listPosts() {
+  const { rows } = await db.query(`
+    SELECT *
+    FROM posts
+    ORDER BY id DESC
+    LIMIT 20;
+  `);
+
+  return rows;
+}
+export default { createPost, listUserPosts, listPosts };

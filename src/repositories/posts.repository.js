@@ -7,25 +7,41 @@ async function createPost(values) {
   return rows[0];
 }
 
-async function listUserPosts(id) {
+async function listUserPosts(userId, id) {
   const { rows } = await db.query(`
-    SELECT *
+    SELECT posts.*, 
+    EXISTS (
+      SELECT 1
+      FROM likes
+      WHERE likes.post_id = posts.id
+      AND likes.user_id = $1
+    ) AS user_liked_post,
+    COUNT(likes.post_id) AS like_count
     FROM posts
-    WHERE user_id = $1
-    ORDER BY id DESC
-    LIMIT 20;
-  `, [id]);
+    LEFT JOIN likes ON likes.post_id = posts.id
+    WHERE posts.user_id = $2
+    GROUP BY posts.id
+  `, [userId, id]);
 
   return rows;
 }
 
-async function listPosts() {
+async function listPosts(userId) {
   const { rows } = await db.query(`
-    SELECT *
+    SELECT posts.*, 
+      EXISTS (
+        SELECT 1
+        FROM likes
+        WHERE likes.post_id = posts.id
+        AND likes.user_id = $1
+      ) AS user_liked_post,
+      COUNT(likes.post_id) AS like_count
     FROM posts
-    ORDER BY id DESC
+    LEFT JOIN likes ON likes.post_id = posts.id
+    GROUP BY posts.id
+    ORDER BY posts.id DESC
     LIMIT 20;
-  `);
+  `, [userId]);
 
   return rows;
 }

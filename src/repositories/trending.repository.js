@@ -10,14 +10,27 @@ export function getTrending() {
   return query;
 }
 
-export function hashtagById(hashtag) {
+export function hashtagById(userId, hashtag) {
   const query = db.query(`
-	SELECT DISTINCT t.post_id, p.url, p.description, p.created_at, u.name, u.photo, u.id AS user_id
-	FROM tags t
-	JOIN posts p ON p.id = t.post_id
-	JOIN users u ON u.id = p.user_id
-	WHERE t.tag = $1
-	ORDER BY t.post_id DESC
-	;`, [hashtag]);
+	SELECT DISTINCT t.post_id, p.url, p.description, p.created_at, u.name, u.photo, u.id AS user_id,
+    EXISTS (
+        SELECT 1
+        FROM likes
+        WHERE likes.post_id = p.id
+        AND likes.user_id = $1
+      ) AS user_liked_post
+    FROM tags t
+    JOIN posts p ON p.id = t.post_id
+    JOIN users u ON u.id = p.user_id
+    WHERE t.tag = $2
+    ORDER BY t.post_id DESC;
+	;`, [userId, hashtag]);
   return query;
 }
+
+// SELECT DISTINCT t.post_id, p.url, p.description, p.created_at, u.name, u.photo, u.id AS user_id
+// 	FROM tags t
+// 	JOIN posts p ON p.id = t.post_id
+// 	JOIN users u ON u.id = p.user_id
+// 	WHERE t.tag = $1
+// 	ORDER BY t.post_id DESC

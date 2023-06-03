@@ -43,4 +43,20 @@ async function listTimelinePosts(req, res) {
   }
 }
 
-export default { create, listTimelinePosts, listUserTimeline };
+async function deletePost(req, res) {
+  const { postId } = req.params;
+
+  try {
+    await postsRepository.deleteOne(postId);
+    return res.sendStatus(204);
+  } catch (err) {
+    return res.status(500).send({ message: err.message });
+  }
+}
+
+export default {
+  create,
+  listTimelinePosts,
+  listUserTimeline,
+  deletePost,
+};

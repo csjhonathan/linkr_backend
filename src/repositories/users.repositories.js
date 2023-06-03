@@ -1,13 +1,8 @@
 import db from '../database/connection.js';
+import userQueryBuilder from '../helpers/userQueryBuilder.js';
 
 export function createUser(data) {
-  const query = {
-    text: `
-      INSERT INTO users (${Object.keys(data).join(', ')})
-      VALUES (${Object.values(data).map((_v, i) => `$${i + 1}`).join(', ')})
-    `,
-    values: Object.values(data),
-  };
+  const query = userQueryBuilder(data);
   return db.query(query);
 }
 

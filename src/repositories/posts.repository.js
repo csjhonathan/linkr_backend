@@ -48,10 +48,18 @@ async function deleteOne(postId) {
     DELETE FROM posts WHERE posts.id = $1;
   `, [postId]);
 }
+async function update(description, postId) {
+  await db.query(`
+    UPDATE posts
+    SET description = $1
+    WHERE id = $2;
+  `, [description, postId]);
+}
 export default {
   createPost,
   listUserPosts,
   listPosts,
   findPostById,
   deleteOne,
+  update,
 };

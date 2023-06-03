@@ -11,9 +11,9 @@ async function listUserPosts(id) {
   const { rows } = await db.query(`
     SELECT *
     FROM posts
+    WHERE user_id = $1
     ORDER BY id DESC
-    LIMIT 20
-    WHERE id = $1;
+    LIMIT 20;
   `, [id]);
 
   return rows;

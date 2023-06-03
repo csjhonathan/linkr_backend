@@ -16,7 +16,7 @@ async function listUserPosts(userId, id) {
       WHERE likes.post_id = posts.id
       AND likes.user_id = $1
     ) AS user_liked_post,
-    COUNT(likes.post_id) AS likes
+    COUNT(likes.post_id) AS like_count
     FROM posts
     LEFT JOIN likes ON likes.post_id = posts.id
     WHERE posts.user_id = $2
@@ -35,7 +35,7 @@ async function listPosts(userId) {
         WHERE likes.post_id = posts.id
         AND likes.user_id = $1
       ) AS user_liked_post,
-      COUNT(likes.post_id) AS likes
+      COUNT(likes.post_id) AS like_count
     FROM posts
     LEFT JOIN likes ON likes.post_id = posts.id
     GROUP BY posts.id

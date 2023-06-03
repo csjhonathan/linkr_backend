@@ -29,4 +29,29 @@ async function listPosts() {
 
   return rows;
 }
-export default { createPost, listUserPosts, listPosts };
+
+async function findPostById(id) {
+  const post = await db.query(`
+    SELECT * FROM posts WHERE id = $1
+  `, [id]);
+  return post.rows[0];
+}
+
+async function deleteOne(postId) {
+  await db.query(`
+    DELETE FROM likes WHERE likes.post_id = $1;
+  `, [postId]);
+  await db.query(`
+    DELETE FROM tags WHERE tags.post_id = $1;
+  `, [postId]);
+  await db.query(`
+    DELETE FROM posts WHERE posts.id = $1;
+  `, [postId]);
+}
+export default {
+  createPost,
+  listUserPosts,
+  listPosts,
+  findPostById,
+  deleteOne,
+};

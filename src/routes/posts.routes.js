@@ -14,7 +14,7 @@ postsRoutes.use(tokenValidator);
 postsRoutes.post('/posts', schemaValidator(postSchema), postsController.create);
 postsRoutes.get('/posts/user/:id', validUserById, postsController.listUserTimeline);
 postsRoutes.get('/posts', postsController.listTimelinePosts);
-postsRoutes.delete('/posts/:postId', tokenValidator, postExistsValidation, postsController.deletePost);
-postsRoutes.patch('/posts/:postId', tokenValidator, postExistsValidation, validateOwnership, schemaValidator(updateSchema), postsController.updateDescription);
+postsRoutes.delete('/posts/:postId', postExistsValidation, postsController.deletePost);
+postsRoutes.patch('/posts/:postId', postExistsValidation, validateOwnership, schemaValidator(updateSchema), postsController.updateDescription);
 
 export default postsRoutes;

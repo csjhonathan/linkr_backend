@@ -54,9 +54,22 @@ async function deletePost(req, res) {
   }
 }
 
+async function updateDescription(req, res) {
+  const { postId } = req.params;
+  const { description } = req.body;
+
+  try {
+    await postsRepository.update(description, postId);
+    return res.sendStatus(200);
+  } catch (err) {
+    return res.status(500).send({ message: err.message });
+  }
+}
+
 export default {
   create,
   listTimelinePosts,
   listUserTimeline,
   deletePost,
+  updateDescription,
 };

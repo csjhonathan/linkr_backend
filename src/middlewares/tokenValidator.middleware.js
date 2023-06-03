@@ -5,7 +5,7 @@ import * as usersRepositories from '../repositories/users.repositories.js';
 export default async function tokenValidator(req, res, next) {
   const { authorization, userid: userId } = req.headers;
   const token = authorization?.split(' ')[1];
-  console.log(authorization, userId);
+
   if (!token || !authorization) return res.status(401).send({ message: 'Valid token required!' });
   try {
     const { rows: [invalidToken] } = await blacklistRepositories.listInvalidToken(token);

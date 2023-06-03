@@ -11,9 +11,6 @@ const postSchema = joi.object({
     .date()
     .timestamp()
     .required(),
-  userId: joi
-    .number()
-    .required(),
 });
 
 export default postSchema;

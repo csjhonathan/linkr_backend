@@ -9,18 +9,26 @@ async function createPost(values) {
 
 async function listUserPosts(userId, id) {
   const { rows } = await db.query(`
-    SELECT posts.*, 
+    SELECT p.*, 
     EXISTS (
       SELECT 1
       FROM likes
-      WHERE likes.post_id = posts.id
+      WHERE likes.post_id = p.id
       AND likes.user_id = $1
-    ) AS user_liked_post,
-    COUNT(likes.post_id) AS like_count
-    FROM posts
-    LEFT JOIN likes ON likes.post_id = posts.id
-    WHERE posts.user_id = $2
-    GROUP BY posts.id
+    ) AS "userLikedPost",
+    COUNT(l.post_id) AS "likeCount",
+    (
+      SELECT ARRAY_AGG(u2.name)
+      FROM likes l
+      JOIN users u2 ON u2.id = l.user_id
+      WHERE l.post_id = p.id
+      LIMIT 2
+    ) AS "likedUsers"
+    FROM posts p
+    LEFT JOIN likes l ON l.post_id = p.id
+    WHERE p.user_id = $2
+    GROUP BY p.id
+    ORDER BY p.id DESC;
   `, [userId, id]);
 
   return rows;
@@ -28,18 +36,25 @@ async function listUserPosts(userId, id) {
 
 async function listPosts(userId) {
   const { rows } = await db.query(`
-    SELECT posts.*, 
-      EXISTS (
-        SELECT 1
-        FROM likes
-        WHERE likes.post_id = posts.id
-        AND likes.user_id = $1
-      ) AS user_liked_post,
-      COUNT(likes.post_id) AS like_count
-    FROM posts
-    LEFT JOIN likes ON likes.post_id = posts.id
-    GROUP BY posts.id
-    ORDER BY posts.id DESC
+    SELECT p.*, 
+    EXISTS (
+      SELECT 1
+      FROM likes
+      WHERE likes.post_id = p.id
+      AND likes.user_id = $1
+    ) AS "userLikedPost",
+    COUNT(l.post_id) AS "likeCount",
+    (
+      SELECT ARRAY_AGG(u2.name)
+      FROM likes l
+      JOIN users u2 ON u2.id = l.user_id
+      WHERE l.post_id = p.id
+      LIMIT 2
+    ) AS "likedUsers"
+    FROM posts p
+    LEFT JOIN likes l ON l.post_id = p.id
+    GROUP BY p.id
+    ORDER BY p.id DESC
     LIMIT 20;
   `, [userId]);
 

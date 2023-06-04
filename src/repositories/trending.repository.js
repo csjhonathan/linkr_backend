@@ -18,18 +18,26 @@ export function hashtagById(userId, hashtag) {
         FROM likes
         WHERE likes.post_id = p.id
         AND likes.user_id = $1
-      ) AS user_liked_post,
+      ) AS "userLikedPost",
+      (
+        SELECT ARRAY_AGG(u2.name)
+        FROM likes l
+        JOIN users u2 ON u2.id = l.user_id
+        WHERE l.post_id = p.id
+        LIMIT 2
+      ) AS "likedUsers",
       (
         SELECT COUNT(*)
         FROM likes
         WHERE likes.post_id = p.id
-      ) AS like_count
+      ) AS "likeCount"
     FROM tags t
     JOIN posts p ON p.id = t.post_id
     JOIN users u ON u.id = p.user_id
     WHERE t.tag = $2
     ORDER BY t.post_id DESC;
 `, [userId, hashtag]);
+
   return query;
 }
 

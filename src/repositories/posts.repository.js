@@ -37,7 +37,7 @@ async function listUserPosts(userId, id) {
 async function listPosts(userId) {
   const { rows } = await db.query(`
   SELECT p.*,
-  u.photo AS user_photo,
+  u.photo AS photo,
   u.name AS user_name,
   EXISTS (
     SELECT 1

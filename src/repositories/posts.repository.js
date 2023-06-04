@@ -9,7 +9,7 @@ async function createPost(values) {
 
 async function listUserPosts(userId, id) {
   const { rows } = await db.query(`
-    SELECT p.*, 
+    SELECT p.*,
     EXISTS (
       SELECT 1
       FROM likes
@@ -36,28 +36,30 @@ async function listUserPosts(userId, id) {
 
 async function listPosts(userId) {
   const { rows } = await db.query(`
-    SELECT p.*, 
-    EXISTS (
-      SELECT 1
-      FROM likes
-      WHERE likes.post_id = p.id
-      AND likes.user_id = $1
-    ) AS "userLikedPost",
-    COUNT(l.post_id) AS "likeCount",
-    (
-      SELECT ARRAY_AGG(u2.name)
-      FROM likes l
-      JOIN users u2 ON u2.id = l.user_id
-      WHERE l.post_id = p.id
-      LIMIT 2
-    ) AS "likedUsers"
-    FROM posts p
-    LEFT JOIN likes l ON l.post_id = p.id
-    GROUP BY p.id
-    ORDER BY p.id DESC
-    LIMIT 20;
+  SELECT p.*,
+  u.photo AS user_photo,
+  u.name AS user_name,
+  EXISTS (
+    SELECT 1
+    FROM likes
+    WHERE likes.post_id = p.id
+    AND likes.user_id = $1
+  ) AS "userLikedPost",
+  COUNT(l.post_id) AS "likeCount",
+  (
+    SELECT ARRAY_AGG(u2.name)
+    FROM likes l
+    JOIN users u2 ON u2.id = l.user_id
+    WHERE l.post_id = p.id
+    LIMIT 2
+  ) AS "likedUsers"
+  FROM posts p
+  LEFT JOIN likes l ON l.post_id = p.id
+  LEFT JOIN users u ON p.user_id = 11
+  GROUP BY p.id, u.photo, u.name
+  ORDER BY p.id DESC
+  LIMIT 20;
   `, [userId]);
-
   return rows;
 }
 

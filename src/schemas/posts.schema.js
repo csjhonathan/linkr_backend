@@ -6,7 +6,8 @@ const postSchema = joi.object({
     .uri(),
   description: joi
     .string()
-    .max(200),
+    .max(200)
+    .optional(),
   createdAt: joi
     .date()
     .timestamp()

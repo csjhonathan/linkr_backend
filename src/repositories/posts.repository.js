@@ -9,7 +9,7 @@ async function createPost(values) {
 
 async function listUserPosts(userId, id) {
   const { rows } = await db.query(`
-    SELECT p.*,
+    SELECT p.*,p.id AS post_id,
     EXISTS (
       SELECT 1
       FROM likes

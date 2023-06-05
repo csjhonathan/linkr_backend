@@ -10,6 +10,8 @@ async function createPost(values) {
 async function listUserPosts(userId, id) {
   const { rows } = await db.query(`
     SELECT p.*,p.id AS post_id,
+    u.photo AS photo,
+    u.name AS name,
     EXISTS (
       SELECT 1
       FROM likes
@@ -26,8 +28,9 @@ async function listUserPosts(userId, id) {
     ) AS "likedUsers"
     FROM posts p
     LEFT JOIN likes l ON l.post_id = p.id
+    LEFT JOIN users u ON u.id = p.user_id
     WHERE p.user_id = $2
-    GROUP BY p.id
+    GROUP BY p.id, u.photo, u.name
     ORDER BY p.id DESC;
   `, [userId, id]);
 

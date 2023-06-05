@@ -1,5 +1,6 @@
 import db from '../database/connection.js';
 import postQueryBuilder from '../helpers/postQueryBuilder.js';
+import tagsRepository from './tags.repository.js';
 
 async function createPost(values) {
   const query = postQueryBuilder(values);
@@ -85,6 +86,17 @@ async function deleteOne(postId) {
   `, [postId]);
 }
 async function update(description, postId) {
+  const regex = /#\w{1,}/g;
+  const hashtagList = description && description.match(regex);
+
+  await db.query(`
+    DELETE FROM tags WHERE tags.post_id = $1;
+  `, [postId]);
+
+  if (hashtagList) {
+    await tagsRepository.insertTag(hashtagList, postId);
+  }
+
   await db.query(`
     UPDATE posts
     SET description = $1

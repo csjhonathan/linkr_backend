@@ -5,7 +5,8 @@ export function getTrending() {
     SELECT tag, COUNT(*)::INTEGER AS amount
     FROM tags
     GROUP BY tag
-    ORDER BY amount DESC;
+    ORDER BY amount DESC
+    LIMIT 10;
   ;`);
   return query;
 }

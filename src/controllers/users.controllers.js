@@ -44,3 +44,14 @@ export async function signOut(req, res) {
     return res.status(500).send({ message: error.message });
   }
 }
+
+export async function getUser(req, res) {
+  const { id } = req.params;// id do usuario dono dos posts
+
+  try {
+    const { rows } = await usersRepositories.getUserById(id);
+    return res.status(200).send(rows[0]);
+  } catch (error) {
+    return res.status(500).send({ message: error.message });
+  }
+}

@@ -1,5 +1,6 @@
 import db from '../database/connection.js';
 import postQueryBuilder from '../helpers/postQueryBuilder.js';
+import tagsRepository from './tags.repository.js';
 
 async function createPost(values) {
   const query = postQueryBuilder(values);
@@ -9,7 +10,9 @@ async function createPost(values) {
 
 async function listUserPosts(userId, id) {
   const { rows } = await db.query(`
-    SELECT p.*,
+    SELECT p.*,p.id AS post_id,
+    u.photo AS photo,
+    u.name AS name,
     EXISTS (
       SELECT 1
       FROM likes
@@ -26,8 +29,9 @@ async function listUserPosts(userId, id) {
     ) AS "likedUsers"
     FROM posts p
     LEFT JOIN likes l ON l.post_id = p.id
+    LEFT JOIN users u ON u.id = p.user_id
     WHERE p.user_id = $2
-    GROUP BY p.id
+    GROUP BY p.id, u.photo, u.name
     ORDER BY p.id DESC;
   `, [userId, id]);
 
@@ -36,7 +40,7 @@ async function listUserPosts(userId, id) {
 
 async function listPosts(userId) {
   const { rows } = await db.query(`
-  SELECT p.*,
+  SELECT p.*,p.id AS post_id,
   u.photo AS photo,
   u.name AS name,
   EXISTS (
@@ -82,6 +86,17 @@ async function deleteOne(postId) {
   `, [postId]);
 }
 async function update(description, postId) {
+  const regex = /#\w{1,}/g;
+  const hashtagList = description && description.match(regex);
+
+  await db.query(`
+    DELETE FROM tags WHERE tags.post_id = $1;
+  `, [postId]);
+
+  if (hashtagList) {
+    await tagsRepository.insertTag(hashtagList, postId);
+  }
+
   await db.query(`
     UPDATE posts
     SET description = $1

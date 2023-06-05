@@ -55,7 +55,7 @@ async function listPosts(userId) {
   ) AS "likedUsers"
   FROM posts p
   LEFT JOIN likes l ON l.post_id = p.id
-  LEFT JOIN users u ON p.user_id = 11
+  LEFT JOIN users u ON p.user_id = $1
   GROUP BY p.id, u.photo, u.name
   ORDER BY p.id DESC
   LIMIT 20;

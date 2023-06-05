@@ -38,7 +38,7 @@ async function listPosts(userId) {
   const { rows } = await db.query(`
   SELECT p.*,
   u.photo AS photo,
-  u.name AS user_name,
+  u.name AS name,
   EXISTS (
     SELECT 1
     FROM likes

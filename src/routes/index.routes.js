@@ -4,6 +4,7 @@ import postsRoutes from './posts.routes.js';
 import likesRouter from './likes.routes.js';
 import trendingRoutes from './trending.routes.js';
 import searchRoutes from './search.routes.js';
+import followsRoutes from './follows.routes.js';
 
 const routes = Router();
 
@@ -12,5 +13,6 @@ routes.use(postsRoutes);
 routes.use(likesRouter);
 routes.use(trendingRoutes);
 routes.use(searchRoutes);
+routes.use(followsRoutes);
 
 export default routes;

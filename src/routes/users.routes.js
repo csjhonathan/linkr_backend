@@ -1,5 +1,7 @@
 import { Router } from 'express';
-import { signUp, signIn, signOut, getUser } from '../controllers/users.controllers.js';
+import {
+  signUp, signIn, signOut, getUser,
+} from '../controllers/users.controllers.js';
 import * as schema from '../schemas/user.schemas.js';
 import schemaValidator from '../middlewares/schemaValidator.middleware.js';
 import userVerifierExists from '../middlewares/userVerifierExists.middleware.js';

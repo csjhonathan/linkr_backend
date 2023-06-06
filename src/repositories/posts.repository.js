@@ -19,6 +19,12 @@ async function listUserPosts(userId, id) {
       WHERE likes.post_id = p.id
       AND likes.user_id = $1
     ) AS "userLikedPost",
+    EXISTS (
+      SELECT 1
+      FROM follows f
+      WHERE f.followed_id = p.user_id
+      AND f.user_id = $1
+    ) AS "followingUser",
     COUNT(l.post_id) AS "likeCount",
     (
       SELECT ARRAY_AGG(u2.name)
@@ -49,6 +55,12 @@ async function listPosts(userId) {
     WHERE likes.post_id = p.id
     AND likes.user_id = $1
   ) AS "userLikedPost",
+  EXISTS (
+    SELECT 1
+    FROM follows f
+    WHERE f.followed_id = p.user_id
+    AND f.user_id = $1
+  ) AS "followingUser",
   COUNT(l.post_id) AS "likeCount",
   (
     SELECT ARRAY_AGG(u2.name)

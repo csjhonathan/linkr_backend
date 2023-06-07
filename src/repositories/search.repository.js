@@ -10,7 +10,8 @@ export default function searching(name, id) {
       AND f.user_id = $2
     ) AS "followingUser"
     FROM users u 
-    WHERE unaccent(name) ILIKE unaccent('%' || $1 || '%');
+    WHERE unaccent(name) ILIKE unaccent('%' || $1 || '%')
+    ORDER BY "followingUser" DESC, u.name;
     `, [name, id]);
   return query;
 }

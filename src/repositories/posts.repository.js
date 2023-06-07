@@ -77,8 +77,6 @@ async function listUserPosts(userId, id) {
   ORDER BY GREATEST(repost_created_at, created_at) DESC, post_id DESC
 
   LIMIT 20;
-
-
   `, [userId, id]);
 
   return rows;

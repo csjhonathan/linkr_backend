@@ -1,6 +1,6 @@
 import commentsRepositories from '../repositories/comments.repositories.js';
 
-async function postComment(req, res) {
+export async function postComment(req, res) {
   const { user } = res.locals;
   const { postId } = req.params;
 
@@ -12,4 +12,14 @@ async function postComment(req, res) {
   }
 }
 
-export default postComment;
+export async function getCommentsByPostId(req, res) {
+  const { user } = res.locals;
+  const { postId } = req.params;
+
+  try {
+    const comments = await commentsRepositories.findComments(user.id, postId);
+    res.send(comments);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+}

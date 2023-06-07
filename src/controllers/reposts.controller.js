@@ -1,4 +1,4 @@
-import { createRepost } from '../repositories/reposts.controller.js';
+import { createRepost } from '../repositories/reposts.repository.js';
 
 export async function rePost(req, res) {
   const { postId } = req.body;

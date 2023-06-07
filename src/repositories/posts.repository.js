@@ -72,6 +72,7 @@ async function listUserPosts(userId, id) {
     LEFT JOIN reposts r ON r.post_id = p.id
     LEFT JOIN users ru ON ru.id = r.user_id
     WHERE (p.user_id = $2 OR (r.user_id = $2 AND r.user_id IS NOT NULL))
+      AND (r.user_id = $2 OR r.user_id IS NULL)
     GROUP BY p.id, u.photo, u.name, r.user_id, ru.name, r.created_at, p.created_at
   ) AS subquery
   ORDER BY GREATEST(repost_created_at, created_at) DESC, post_id DESC

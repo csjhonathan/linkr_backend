@@ -19,6 +19,12 @@ async function listUserPosts(userId, id) {
       WHERE likes.post_id = p.id
       AND likes.user_id = $1
     ) AS "userLikedPost",
+    EXISTS (
+      SELECT 1
+      FROM follows f
+      WHERE f.followed_id = p.user_id
+      AND f.user_id = $1
+    ) AS "followingUser",
     COUNT(l.post_id) AS "likeCount",
     (
       SELECT ARRAY_AGG(u2.name)
@@ -103,6 +109,7 @@ async function listPosts(userId) {
     GROUP BY p.id, u.photo, u.name, r.user_id, ru.name, r.created_at, p.created_at
   ) AS subquery
   ORDER BY GREATEST(repost_created_at, created_at) DESC, post_id DESC
+
   LIMIT 20;
   `, [userId]);
   return rows;

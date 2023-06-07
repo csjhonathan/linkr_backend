@@ -6,6 +6,7 @@ import trendingRoutes from './trending.routes.js';
 import searchRoutes from './search.routes.js';
 import followsRoutes from './follows.routes.js';
 import repostRoutes from './reposts.routes.js';
+import commentsRouter from './comments.routes.js';
 
 const routes = Router();
 
@@ -16,5 +17,6 @@ routes.use(trendingRoutes);
 routes.use(searchRoutes);
 routes.use(followsRoutes);
 routes.use(repostRoutes);
+routes.use(commentsRouter);
 
 export default routes;

@@ -10,7 +10,9 @@ async function createPost(values) {
 
 async function listUserPosts(userId, id) {
   const { rows } = await db.query(`
-  SELECT subquery.*, (COUNT(*) OVER (PARTITION BY subquery.post_id) - 1) AS "repostCount"
+  SELECT subquery.*, 
+    (COUNT(*) OVER (PARTITION BY subquery.post_id) - 1) AS "repostCount",
+    COALESCE(c.comment_count, 0) AS "commentCount"
   FROM (
     SELECT p.*, p.id AS post_id,
       u.photo AS photo,
@@ -25,7 +27,6 @@ async function listUserPosts(userId, id) {
         AND likes.user_id = $1
       ) AS "userLikedPost",
       COUNT(DISTINCT l.user_id) AS "likeCount",
-      COUNT(DISTINCT c.user_id) AS "commentCount",
       (
         SELECT ARRAY_AGG(u2.name)
         FROM likes l
@@ -35,7 +36,6 @@ async function listUserPosts(userId, id) {
       ) AS "likedUsers"
     FROM posts p
     LEFT JOIN likes l ON l.post_id = p.id
-    LEFT JOIN comments c ON c.post_id = p.id
     LEFT JOIN users u ON u.id = p.user_id
     LEFT JOIN reposts r ON r.post_id = p.id
     LEFT JOIN users ru ON ru.id = r.user_id
@@ -57,7 +57,6 @@ async function listUserPosts(userId, id) {
         AND likes.user_id = $1
       ) AS "userLikedPost",
       COUNT(DISTINCT l.user_id) AS "likeCount",
-      COUNT(DISTINCT c.user_id) AS "commentCount",
       (
         SELECT ARRAY_AGG(u2.name)
         FROM likes l
@@ -67,7 +66,6 @@ async function listUserPosts(userId, id) {
       ) AS "likedUsers"
     FROM posts p
     LEFT JOIN likes l ON l.post_id = p.id
-    LEFT JOIN comments c ON c.post_id = p.id
     LEFT JOIN users u ON u.id = p.user_id
     LEFT JOIN reposts r ON r.post_id = p.id
     LEFT JOIN users ru ON ru.id = r.user_id
@@ -75,6 +73,11 @@ async function listUserPosts(userId, id) {
       AND (r.user_id = $2 OR r.user_id IS NULL)
     GROUP BY p.id, u.photo, u.name, r.user_id, ru.name, r.created_at, p.created_at
   ) AS subquery
+  LEFT JOIN (
+    SELECT post_id, COUNT(*) AS comment_count
+    FROM comments
+    GROUP BY post_id
+  ) AS c ON c.post_id = subquery.post_id
   ORDER BY GREATEST(repost_created_at, created_at) DESC, post_id DESC
 
   LIMIT 20;
@@ -85,7 +88,9 @@ async function listUserPosts(userId, id) {
 
 async function listPosts(userId) {
   const { rows } = await db.query(`
-  SELECT subquery.*, (COUNT(*) OVER (PARTITION BY subquery.post_id) - 1) AS "repostCount"
+  SELECT subquery.*, 
+    (COUNT(*) OVER (PARTITION BY subquery.post_id) - 1) AS "repostCount",
+    COALESCE(c.comment_count, 0) AS "commentCount"
   FROM (
     SELECT p.*, p.id AS post_id,
       u.photo AS photo,
@@ -100,7 +105,6 @@ async function listPosts(userId) {
         AND likes.user_id = $1
       ) AS "userLikedPost",
       COUNT(DISTINCT l.user_id) AS "likeCount",
-      COUNT(DISTINCT c.user_id) AS "commentCount",
       (
         SELECT ARRAY_AGG(u2.name)
         FROM likes l
@@ -110,7 +114,6 @@ async function listPosts(userId) {
       ) AS "likedUsers"
     FROM posts p
     LEFT JOIN likes l ON l.post_id = p.id
-    LEFT JOIN comments c ON c.post_id = p.id
     LEFT JOIN users u ON u.id = p.user_id
     LEFT JOIN reposts r ON r.post_id = p.id
     LEFT JOIN users ru ON ru.id = r.user_id
@@ -131,7 +134,6 @@ async function listPosts(userId) {
         AND likes.user_id = $1
       ) AS "userLikedPost",
       COUNT(DISTINCT l.user_id) AS "likeCount",
-      COUNT(DISTINCT c.user_id) AS "commentCount",
       (
         SELECT ARRAY_AGG(u2.name)
         FROM likes l
@@ -141,12 +143,16 @@ async function listPosts(userId) {
       ) AS "likedUsers"
     FROM posts p
     LEFT JOIN likes l ON l.post_id = p.id
-    LEFT JOIN comments c ON c.post_id = p.id
     LEFT JOIN users u ON u.id = p.user_id
     LEFT JOIN reposts r ON r.post_id = p.id
     LEFT JOIN users ru ON ru.id = r.user_id
     GROUP BY p.id, u.photo, u.name, r.user_id, ru.name, r.created_at, p.created_at
   ) AS subquery
+  LEFT JOIN (
+    SELECT post_id, COUNT(*) AS comment_count
+    FROM comments
+    GROUP BY post_id
+  ) AS c ON c.post_id = subquery.post_id
   ORDER BY GREATEST(repost_created_at, created_at) DESC, post_id DESC
 
   LIMIT 20;

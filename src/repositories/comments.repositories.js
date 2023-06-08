@@ -18,15 +18,7 @@ async function findComments(userId, postId) {
       FROM follows f
       WHERE f.followed_id = c.user_id
       AND f.user_id = $1
-    ) AS "followingUser",
-    EXISTS (
-      SELECT 1
-      FROM posts p
-      WHERE p.user_id = c.user_id
-      AND p.id = c.post_id
-      AND p.id = $2
-      and c.user_id = $1
-    ) AS "postAuthor"
+    ) AS "followingUser"
     FROM "comments" c
     LEFT JOIN users u ON u.id = c.user_id
     WHERE c.post_id = $2

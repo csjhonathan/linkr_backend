@@ -168,15 +168,18 @@ async function findPostById(id) {
 }
 
 async function deleteOne(postId) {
-  await db.query(`
-    DELETE FROM likes WHERE likes.post_id = $1;
-  `, [postId]);
-  await db.query(`
-    DELETE FROM tags WHERE tags.post_id = $1;
-  `, [postId]);
-  await db.query(`
-    DELETE FROM posts WHERE posts.id = $1;
-  `, [postId]);
+  try {
+    await db.query('BEGIN');
+    await db.query('DELETE FROM likes WHERE likes.post_id = $1', [postId]);
+    await db.query('DELETE FROM tags WHERE tags.post_id = $1', [postId]);
+    await db.query('DELETE FROM reposts WHERE reposts.post_id = $1', [postId]);
+    await db.query('DELETE FROM "comments" WHERE "comments".post_id = $1', [postId]);
+    await db.query('DELETE FROM posts WHERE posts.id = $1', [postId]);
+    await db.query('COMMIT');
+  } catch (error) {
+    await db.query('ROLLBACK');
+    console.error('Error:', error);
+  }
 }
 async function update(description, postId) {
   const regex = /#\w{1,}/g;

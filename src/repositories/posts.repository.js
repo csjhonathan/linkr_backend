@@ -11,7 +11,7 @@ async function createPost(values) {
 async function listUserPosts(userId, id) {
   const { rows } = await db.query(`
   SELECT subquery.*, 
-    (COUNT(*) OVER (PARTITION BY subquery.post_id) - 1) AS "repostCount",
+    (SELECT COUNT(*) FROM reposts WHERE post_id = subquery.post_id) AS "repostCount",
     COALESCE(c.comment_count, 0) AS "commentCount"
   FROM (
     SELECT p.*, p.id AS post_id,

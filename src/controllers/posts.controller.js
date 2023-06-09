@@ -25,8 +25,10 @@ async function create(req, res) {
 async function listUserTimeline(req, res) {
   const { id } = req.params;// id do usuario dono dos posts
   const { user } = res.locals;// id do usuario logado
+  const { offset } = res;
+
   try {
-    const timelinePosts = await postsRepository.listUserPosts(user.id, id);
+    const timelinePosts = await postsRepository.listUserPosts(user.id, id, offset);
 
     return res.status(200).send(timelinePosts);
   } catch (err) {
@@ -36,8 +38,10 @@ async function listUserTimeline(req, res) {
 
 async function listTimelinePosts(req, res) {
   const { user } = res.locals;
+  const { offset } = res;
+
   try {
-    const timelinePosts = await postsRepository.listPosts(user.id);
+    const timelinePosts = await postsRepository.listPosts(user.id, offset);
 
     return res.status(200).send(timelinePosts);
   } catch (err) {

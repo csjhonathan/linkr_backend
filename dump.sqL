@@ -152,7 +152,7 @@ CREATE TABLE public.posts (
     id integer NOT NULL,
     url text NOT NULL,
     description character varying NOT NULL,
-    created_at timestamp without time zone DEFAULT '2023-06-06 09:50:11.627347'::timestamp without time zone NOT NULL,
+    created_at timestamp with time zone DEFAULT now(),
     user_id integer NOT NULL
 );
 
@@ -184,7 +184,8 @@ ALTER SEQUENCE public.posts_id_seq OWNED BY public.posts.id;
 CREATE TABLE public.reposts (
     id integer NOT NULL,
     post_id integer NOT NULL,
-    user_id integer NOT NULL
+    user_id integer NOT NULL,
+    created_at timestamp with time zone DEFAULT now()
 );
 
 
@@ -249,7 +250,7 @@ CREATE TABLE public.users (
     email text NOT NULL,
     password text NOT NULL,
     photo text,
-    created_at timestamp without time zone DEFAULT '2023-06-06 09:50:11.627347'::timestamp without time zone NOT NULL
+    created_at timestamp without time zone DEFAULT '2023-06-09 20:26:34.729438'::timestamp without time zone NOT NULL
 );
 
 
@@ -434,11 +435,11 @@ SELECT pg_catalog.setval('public.users_id_seq', 1, false);
 
 
 --
--- Name: blacklist blacklist_pk; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: blacklist blacklist_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.blacklist
-    ADD CONSTRAINT blacklist_pk PRIMARY KEY (id);
+    ADD CONSTRAINT blacklist_pkey PRIMARY KEY (id);
 
 
 --
@@ -458,27 +459,19 @@ ALTER TABLE ONLY public.follows
 
 
 --
--- Name: likes likes_pk; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: likes likes_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.likes
-    ADD CONSTRAINT likes_pk PRIMARY KEY (id);
+    ADD CONSTRAINT likes_pkey PRIMARY KEY (id);
 
 
 --
--- Name: posts posts_pk; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: posts posts_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.posts
-    ADD CONSTRAINT posts_pk PRIMARY KEY (id);
-
-
---
--- Name: tags posts_tags_pk; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.tags
-    ADD CONSTRAINT posts_tags_pk PRIMARY KEY (id);
+    ADD CONSTRAINT posts_pkey PRIMARY KEY (id);
 
 
 --
@@ -490,6 +483,14 @@ ALTER TABLE ONLY public.reposts
 
 
 --
+-- Name: tags tags_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.tags
+    ADD CONSTRAINT tags_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: users users_email_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -498,11 +499,11 @@ ALTER TABLE ONLY public.users
 
 
 --
--- Name: users users_pk; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.users
-    ADD CONSTRAINT users_pk PRIMARY KEY (id);
+    ADD CONSTRAINT users_pkey PRIMARY KEY (id);
 
 
 --

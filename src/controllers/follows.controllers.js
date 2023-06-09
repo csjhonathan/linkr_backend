@@ -30,3 +30,13 @@ export async function unfollowUser(req, res) {
     return res.status(500).send({ message: error.message });
   }
 }
+
+export async function getFollowings(req, res) {
+  const { id } = res.locals.user;
+  try {
+    const followingsNumber = await followsRepository.getFollowings(id);
+    return res.status(200).send(followingsNumber.rows[0]);
+  } catch (err) {
+    return res.status(500).send({ message: err.message });
+  }
+}

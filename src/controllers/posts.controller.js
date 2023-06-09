@@ -25,7 +25,8 @@ async function create(req, res) {
 async function listUserTimeline(req, res) {
   const { id } = req.params;// id do usuario dono dos posts
   const { user } = res.locals;// id do usuario logado
-  const { offset } = res.query;
+  const { offset } = res;
+
   try {
     const timelinePosts = await postsRepository.listUserPosts(user.id, id, offset);
 

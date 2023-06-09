@@ -80,7 +80,7 @@ async function listUserPosts(userId, id, offset = 0) {
   ) AS c ON c.post_id = subquery.post_id
   ORDER BY GREATEST(repost_created_at, created_at) DESC, post_id DESC
 
-  LIMIT 20
+  LIMIT 10
   OFFSET $3;
   `, [userId, id, offset]);
 
@@ -99,6 +99,18 @@ async function listPosts(userId, offset = 0) {
       NULL AS repost_user_id,
       NULL AS repost_user_name,
       NULL AS repost_created_at,
+      EXISTS (
+        SELECT 1
+        FROM follows fol
+        WHERE fol.followed_id = r.user_id
+        AND fol.user_id = $1
+      ) AS "followingRepostUser",
+      EXISTS (
+        SELECT 1
+        FROM follows fo
+        WHERE fo.followed_id = p.user_id
+        AND fo.user_id = $1
+      ) AS "followingUser",
       EXISTS (
         SELECT 1
         FROM likes
@@ -130,6 +142,18 @@ async function listPosts(userId, offset = 0) {
       r.created_at AS repost_created_at,
       EXISTS (
         SELECT 1
+        FROM follows fol
+        WHERE fol.followed_id = r.user_id
+        AND fol.user_id = $1
+      ) AS "followingRepostUser",
+      EXISTS (
+        SELECT 1
+        FROM follows fo
+        WHERE fo.followed_id = p.user_id
+        AND fo.user_id = $1
+      ) AS "followingUser",
+      EXISTS (
+        SELECT 1
         FROM likes
         WHERE likes.post_id = p.id
         AND likes.user_id = $1
@@ -154,9 +178,19 @@ async function listPosts(userId, offset = 0) {
     FROM comments
     GROUP BY post_id
   ) AS c ON c.post_id = subquery.post_id
-  ORDER BY GREATEST(repost_created_at, created_at) DESC, post_id DESC
+  WHERE (subquery."followingUser" = true AND repost_user_id IS NULL) 
+    OR (subquery."followingRepostUser" = true AND repost_user_id IS NOT NULL)
+    OR (repost_user_id = $1 AND (repost_user_id IS NULL OR repost_user_id = $1))
+    OR EXISTS (
+      SELECT 1
+      FROM posts
+      WHERE user_id = $1
+      AND id = subquery.post_id
+      AND repost_user_id IS NULL
+  )
+  ORDER BY GREATEST(repost_created_at, created_at, subquery.created_at) DESC, subquery.post_id DESC
 
-  LIMIT 20
+  LIMIT 10
   OFFSET $2;
   `, [userId, offset]);
   return rows;

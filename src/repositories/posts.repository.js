@@ -8,9 +8,9 @@ async function createPost(values) {
   return rows[0];
 }
 
-async function listUserPosts(userId, id) {
+async function listUserPosts(userId, id, offset = 0) {
   const { rows } = await db.query(`
-  SELECT subquery.*, 
+  SELECT subquery.*,
     (SELECT COUNT(*) FROM reposts WHERE post_id = subquery.post_id) AS "repostCount",
     COALESCE(c.comment_count, 0) AS "commentCount"
   FROM (
@@ -80,15 +80,16 @@ async function listUserPosts(userId, id) {
   ) AS c ON c.post_id = subquery.post_id
   ORDER BY GREATEST(repost_created_at, created_at) DESC, post_id DESC
 
-  LIMIT 20;
-  `, [userId, id]);
+  LIMIT 20
+  OFFSET $3;
+  `, [userId, id, offset]);
 
   return rows;
 }
 
-async function listPosts(userId) {
+async function listPosts(userId, offset = 0) {
   const { rows } = await db.query(`
-  SELECT subquery.*, 
+  SELECT subquery.*,
     (COUNT(*) OVER (PARTITION BY subquery.post_id) - 1) AS "repostCount",
     COALESCE(c.comment_count, 0) AS "commentCount"
   FROM (
@@ -155,8 +156,9 @@ async function listPosts(userId) {
   ) AS c ON c.post_id = subquery.post_id
   ORDER BY GREATEST(repost_created_at, created_at) DESC, post_id DESC
 
-  LIMIT 20;
-  `, [userId]);
+  LIMIT 20
+  OFFSET $2;
+  `, [userId, offset]);
   return rows;
 }
 

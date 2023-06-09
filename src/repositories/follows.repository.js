@@ -29,3 +29,17 @@ export function deleteFollow(userId, followedId) {
 
   return db.query(query);
 }
+
+export function getFollowings(userId) {
+  const query = {
+    text: `
+    SELECT COUNT(*)::INTEGER AS "followingsCount"
+    FROM follows f
+    WHERE f.user_id = $1
+    GROUP BY f.user_id;
+    `,
+    values: [userId],
+  };
+
+  return db.query(query);
+}

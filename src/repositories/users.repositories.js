@@ -9,9 +9,13 @@ export function createUser(data) {
 export function getUserByEmail(email) {
   const query = {
     text: `
-      SELECT u.id, u.name, u.email, u.password, u.photo
+      SELECT u.id, u.name, u.email, u.password, u.photo,
+      COUNT(f.user_id = u.id)::INTEGER AS "followingsCount"
       FROM users u
-      WHERE email = $1;
+      LEFT JOIN follows f
+      ON f.user_id = u.id
+      WHERE email = $1
+      GROUP BY u.id;
     `,
     values: [email],
   };

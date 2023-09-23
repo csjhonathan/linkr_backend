@@ -30,7 +30,7 @@ export async function signIn(req, res) {
     photo: user.photo,
     followingsCount: user.followingsCount,
   };
-  console.log(payload);
+
   const token = Jwt.sign(payload, process.env.SECRET_KEY);
 
   return res.status(200).send({ token });
@@ -47,7 +47,7 @@ export async function signOut(req, res) {
 }
 
 export async function getUser(req, res) {
-  const { id } = req.params;// id do usuario dono dos posts
+  const { id } = req.params;
   const { id: folowerId } = res.locals.user;
   try {
     const { rows } = await usersRepositories.getUserById(id, folowerId);

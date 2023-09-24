@@ -41,6 +41,9 @@ Este projeto foi construído em colaboração com:
 ***Configurando Variáveis de Ambiente***:
 
 - Crie um arquivo `.env` como mostra o arquivo `.env.example`
+
+***IMPORTANTE***:
+
 - Este projeto foi desenvolvido como um projeto fullstack, portanto existe uma interface própria para ele, o link para o repositório frontend da aplicação é este: [Linkr Frontend](https://github.com/csjhonathan/linkr_frotend)
 
 <h3>Execução</h3>

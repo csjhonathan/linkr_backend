@@ -1,8 +1,7 @@
-/* eslint-disable import/prefer-default-export */
 export const signUpDoc = {
   post: {
     summary: 'Registrar um novo usuário',
-    tags: ['Usuários'],
+    tags: ['Users'],
     requestBody: {
       description: 'Dados do usuário a ser registrado',
       content: {
@@ -33,7 +32,7 @@ export const signUpDoc = {
 export const signInDoc = {
   post: {
     summary: 'Autenticar um usuário',
-    tags: ['Usuários'],
+    tags: ['Users'],
     requestBody: {
       description: 'Dados do usuário que deseja fazer login',
       content: {
@@ -79,7 +78,7 @@ export const signInDoc = {
 export const signOutDoc = {
   post: {
     summary: 'Encerrar a sessão do usuário e exluir seu token!',
-    tags: ['Usuários'],
+    tags: ['Users'],
     security: [
       {
         bearerAuth: [],
@@ -102,7 +101,7 @@ export const signOutDoc = {
 export const getUserDoc = {
   get: {
     summary: 'Fornecer dados de um usuário',
-    tags: ['Usuários'],
+    tags: ['Users'],
     security: [
       {
         bearerAuth: [],

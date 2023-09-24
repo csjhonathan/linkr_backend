@@ -6,4 +6,5 @@ const trendingRoutes = Router();
 
 trendingRoutes.get('/trending', tokenValidator, listTrending);
 trendingRoutes.get('/trending/:hashtag', tokenValidator, listHashtagById);
+
 export default trendingRoutes;

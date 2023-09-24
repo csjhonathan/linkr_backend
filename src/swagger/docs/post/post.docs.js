@@ -142,6 +142,7 @@ export const timelineDoc = {
 
 export const deletePostDoc = {
   delete: {
+    summary: 'Deletar o post e todos os reposts associados especificado pelo id',
     tags: ['Posts'],
     security: [
       {
@@ -181,6 +182,7 @@ export const deletePostDoc = {
 
 export const updatePostDoc = {
   patch: {
+    summary: 'Atualizar o post especificado pelo id',
     tags: ['Posts'],
     security: [
       {
